@@ -1,0 +1,235 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg-color: #d4a299;
+  --calendar-bg-color: #e4e2e1;
+
+  --text-color: #ab837c;
+
+  --active-color: #d4a299;
+  --active-text-color: #ffeb99;
+  --inactive-color: #d2cdcd;
+
+  --button-color: #ffeb99;
+
+  --border-radius: 15px;
+
+  --title-font: 1.5rem;
+  --text-font: 1rem;
+
+  --transition: all 300ms ease;
+  --box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.3);
+}
+
+/* Css reset stranice */
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  list-style: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  padding: 10px;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+
+  position: relative;
+}
+
+/* PopUp */
+.modal__container {
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+  inset: 0;
+
+  background-color: rgba(250, 300, 420, 0.1);
+  backdrop-filter: blur(1px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  width: 20rem;
+  height: 25rem;
+  padding: 10px;
+
+  border-radius: var(--border-radius);
+
+  border: 1px solid var(--button-color);
+  backdrop-filter: blur(20px);
+
+  color: var(--text-color);
+  position: relative;
+}
+
+.btn__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  transform: translate(50%, -50%);
+
+  background-color: var(--button-color);
+  color: var(--text-color);
+
+  border-radius: 50%;
+  padding: 4px 8px;
+  border-color: transparent;
+
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.modal form {
+  margin-top: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+form input {
+  padding: 10px;
+  border-radius: var(--border-radius);
+}
+
+/* Kotenjer za kalendar i info bar */
+.container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 10px;
+
+  background-color: var(--calendar-bg-color);
+  color: var(--text-color);
+
+  border-radius: var(--border-radius);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+
+  box-shadow: var(--box-shadow);
+}
+
+.container .infoBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* infoBar  */
+.infoBar .title__date {
+  font-size: var(--title-font);
+  font-weight: 800;
+
+  letter-spacing: 4px;
+}
+
+/* Kalendar */
+.calendar .calendar__list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.date__field {
+  width: calc(100% / 7);
+  height: 4rem;
+  text-align: left;
+
+  padding: 4px;
+  position: relative;
+}
+
+.date__field-leave {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-color: var(--button-color);
+  color: var(--text-color);
+
+  width: 95%;
+  height: 1.2rem;
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+}
+
+.weekDays {
+  width: 100%;
+  padding: 2px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  text-align: center;
+
+  font-weight: 600;
+}
+
+.dates li {
+  border: 1px solid var(--bg-color);
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.dates li:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+/* buttons */
+.buttons :first-child {
+  margin-right: 10px;
+}
+
+/* Style button-a */
+.btn {
+  display: inline-block;
+  cursor: pointer;
+  padding: 4px 30px;
+
+  background-color: var(--button-color);
+  color: var(--text-color);
+
+  border: none;
+  border-radius: var(--border-radius);
+
+  transition: var(--transition);
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+.btn:focus {
+  transform: scale(0.9);
+}
+
+/* dodatne klase */
+
+.active {
+  font-weight: 700;
+  background-color: var(--active-color);
+  color: var(--active-text-color);
+}
+.inactive {
+  font-weight: 300;
+  background-color: var(--inactive-color);
+}
+
+.hidden {
+  display: none;
+}

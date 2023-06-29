@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="script.js"></script>
+    <title>Kalendar | Project</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="infoBar">
+        <h2 class="title__date">Jun 2023</h2>
+        <button class="btn btn__open">Odsustvo</button>
+        <div class="buttons">
+          <button id="previous" class="btn">Previos</button>
+          <button id="next" class="btn">Next</button>
+        </div>
+      </div>
+      <div class="calendar">
+        <ul class="calendar__list weekDays">
+          <li>Ponedeljak</li>
+          <li>Utorak</li>
+          <li>Srijeda</li>
+          <li>Četvrtak</li>
+          <li>Petak</li>
+          <li>Subota</li>
+          <li>Nedelja</li>
+        </ul>
+        <ul class="calendar__list dates"></ul>
+      </div>
+    </div>
+    <div class="modal__container hidden">
+      <div class="modal">
+        <button class="btn__close">X</button>
+        <h2>Registrovanje odsustva</h2>
+
+        <form id="modal__form">
+          <div>
+            <label for="date">Datum:</label>
+            <input id="date" type="date" />
+          </div>
+
+          <div>
+            <label for="type">Vrsta odsustva:</label>
+            <input id="type" type="text" />
+          </div>
+
+          <input class="btn" type="submit" value="Sačuvaj" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

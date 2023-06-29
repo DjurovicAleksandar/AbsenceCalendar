@@ -1,50 +1,60 @@
 'use strict';
 
-//Varijable
+// Varijable
 
+// Selektovanje elemenata iz DOM-a
+
+//Mjesec i datum u naslovu
 const titleDate = document.querySelector('.title__date');
-
+//ul lista za datume
 const dateList = document.querySelector('.dates');
-
+//parent kotenjer buttona - previous i next
 const buttons = document.querySelector('.buttons');
-
+//Pop up za unosenje odsustva
+const modal = document.querySelector('.modal__container');
+//button manipulaciju modalom
 const btnOpenModal = document.querySelector('.btn__open');
 const btnCloseModal = document.querySelector('.btn__close');
 
-const btnDeleteAbsenceModal = document.querySelector('.modal__absence-delete');
-
-const modal = document.querySelector('.modal__container');
-const modalAbsence = document.querySelector('.modal__container2');
-const modalAbsenceText = document.querySelector('.modal__absence-text');
-
+//Forma u modalu za unosenje odsustva
 const modalForm = document.getElementById('modal__form');
 const inputDate = document.getElementById('date');
 const inputType = document.getElementById('type');
 
+//button za uklananje odsustva sa datum polja
+const btnDeleteAbsenceModal = document.querySelector('.modal__absence-delete');
+//Pop up koji se otvara klikom na odsustvo u datum polju
+const modalAbsence = document.querySelector('.modal__container2');
+//Text prikazan u tom modulu
+const modalAbsenceText = document.querySelector('.modal__absence-text');
+
 const months = [
-  'Januar',
-  'Februar',
-  'Mart',
-  'April',
-  'Maj',
-  'Jun',
-  'Jul',
-  'Avgust',
-  'Septembar',
-  'Oktobar',
-  'Novembar',
-  'Decembar',
+  'JAN',
+  'FEB',
+  'MAR',
+  'APR',
+  'MAJ',
+  'JUN',
+  'JUL',
+  'AVG',
+  'SEP',
+  'OKT',
+  'NOV',
+  'DEC',
 ];
-// Kreiranje trenutno datuma putem new Date konstruktora, kao i kreiranje trenutne godine i mjeseca iz ovog new Date konstruktora
+
+// Kreiranje trenutno datuma, trenutne godine i trenutnog meseca
 let date = new Date(),
   currentYear = date.getFullYear(),
   currentMonth = date.getMonth(),
+  //deklaracija key varijable koju koristimo za save elemenata u local storage
   key,
+  //workAbsenceEl - u toku kodu kreiramo element na ovu varijablu, koji koristimo za element odsustva na datum polju
   workAbsenceEl;
 
 //Funkcije
 
-//open popup
+// Funkcija za otvaranje popup prozora
 const openModal = function (e) {
   //Dinamicki odredjujemo datum, da prilikom otvaranja modala prikaze mjesec i godinu na kome smo
   const formattedDate = `${currentYear}-${(currentMonth + 1)
@@ -62,33 +72,32 @@ const openModal = function (e) {
   modal.classList.remove('hidden');
 };
 
-//close pop up
+// Funkcija za zatvaranje popup prozora
 const closeModal = function () {
   modal.classList.add('hidden');
 };
 
+// Funkcija za izračunavanje dana, tj fix da sedmica pocinje ponedeljkom, a ne nedeljom
 const calcDay = day => (day === 0 ? (day = 6) : (day -= 1));
-// Nedelja je 0, zato je prebacujemo na zadnji dan, 7
-//Oduzimamo 1 od dana, da pomjerimo dane za jednu poziciju
 
 //funckija za prikaz datuma u kalnderu
 const renderDates = () => {
-  //pvi dan u sedmici
+  //Pvi dan u sedmici
   let firstDateDay = new Date(currentYear, currentMonth, 1).getDay(),
-    //poslednji datum u mjesecu
+    //Poslednji datum u mjesecu
     lastMonthDate = new Date(currentYear, currentMonth + 1, 0).getDate(),
-    //poslednji dan u mjesecu
+    //Poslednji dan u mjesecu
     lastDateDay = new Date(currentYear, currentMonth, lastMonthDate).getDay(),
-    //poslednji datum u prethodnom mjesecu
+    //Poslednji datum u prethodnom mjesecu
     previousMonthLastDate = new Date(currentYear, currentMonth, 0).getDate(),
-    //Ovdje cemo smjestiti LI elemnt sa odgovarajucim datumima
+    // Promenljiva za smeštanje HTML markup-a
     dateMarkup = ``;
 
-  //Umjesto nedelje vracamo prvi dan da bde ponedeljak
+  // Prebacivanje nedelje (0) na poslednji dan (6)
   lastDateDay = calcDay(lastDateDay);
   firstDateDay = calcDay(firstDateDay);
 
-  // //loop za generisanje datuma iz proslog mjeseca
+  // Generisanje datuma iz prethodnog mjeseca
   for (let i = firstDateDay; i > 0; i--) {
     const liID = `${currentYear}-${(currentMonth - 1)
       .toString()
@@ -105,7 +114,7 @@ const renderDates = () => {
     dateMarkup += liElement.outerHTML;
   }
 
-  //Loop da dobijanje datuma iz datog mjeseca
+  //Generisanje datuma iz trenutnog mjeseca
   for (let i = 1; i <= lastMonthDate; i++) {
     const currentDate = new Date();
     const isCurrentDate =
@@ -135,7 +144,7 @@ const renderDates = () => {
     dateMarkup += liElement.outerHTML;
   }
 
-  // //loop za dobijanje prvih datuma za sljedeci mjesec
+  //Generisanje datuma za sljedeći mjesec
   for (let i = lastDateDay; i < 6; i++) {
     const liID = `${currentYear}-${(currentMonth + 1)
       .toString()
@@ -153,36 +162,42 @@ const renderDates = () => {
   return dateMarkup;
 };
 
-//funkcija za prikaz kalendara
+//Funkcija za prikaz kalendara
 const renderCalendar = () => {
   key = `${currentMonth}-${currentYear}`;
-
+  // Preuzimanje datuma odsustva iz lokalnog skladišta
   const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
-
   dateList.innerHTML = renderDates();
 
-  //loop preko local storagea
+  // Iteracija kroz datume odsustva i prikaz na kalendaru
   absenceDates.forEach(([strDate, strText]) => {
+    //Na osnovu strDate-a iz lokalnog skladista, selekcujemo element
     const field = document
       .getElementById(`${strDate}`)
       ?.querySelector('.date__field-leave');
 
+    //Uklanjamo hidden klasu sa polja datuma da bi ga prikazali na kalendaru
     field.classList.remove('hidden');
+    //Text contet prilogodjavamo text unjetom u modal pop up windowu
     field.textContent = strText;
+
+    //Klikom na polje odsustva u polju datuma otvara pop up, koji prikazuje kompletan tekst tog odsustva
     field.addEventListener('click', e => {
       modalAbsence.classList.remove('hidden');
       modalAbsenceText.textContent = strText;
 
+      //u pop up se nalazi button Ukloni, klikom na njega uklanjamo odustvo iz kalendara
       btnDeleteAbsenceModal.addEventListener('click', () => {
         handleAbsenceClick(field);
       });
     });
   });
 
+  //Dinamički prikaz mjeseca i datuma u naslovu na osnovu trenutne godine i mjeseca
   titleDate.textContent = `${months[currentMonth]} ${currentYear}`;
 };
 
-//formManipluation
+// Funkcija za manipulaciju formom
 const handleSubmit = e => {
   e.preventDefault();
 
@@ -192,33 +207,35 @@ const handleSubmit = e => {
     .map((d, i) => (i === 1 ? (d - 1).toString().padStart(2, 0) : d))
     .join('-');
 
-  //itemi iz local Storage-a
+  // Preuzimanje datuma odsustva iz lokalnog skladišta
   const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
 
-  //Kreiranja novog kljuc, da bude matching sa izabranim mjesecom
+  // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
   let newKey = formattedDate.split('-');
 
-  //Parsujemo month, zato sto je u obliku koji pocinje sa 0
+  // Parsiranje mjeseca jer je u obliku koji počinje sa 0
   newKey = `${parseInt(newKey[1])}-${newKey[0]}`;
 
-  //Pushamo date u array
+  // Dodavanje datuma u niz
   absenceDates.push([`num${formattedDate}`, inputType.value]);
   workAbsenceEl.textContent = inputType.value;
 
-  //Snimanje u local storage
+  // Čuvanje podataka u lokalnom skladištu
   localStorage.setItem(newKey, JSON.stringify(absenceDates));
 
   renderCalendar();
   closeModal();
 };
 
-//Funkcija za button click
+//Funkcija manipulisanja klik eventima - buttoni next i previous
 const handleButtonClick = e => {
-  //Guardin claw, da zaustavimo ocitavanje klik na dio parent kotenjera koji nije btn
+  //Guardin claw - zaustavljamo obradu klik eventom na djelovima parent kotenjera koji nije dugme
   if (e.target.className !== 'btn') return;
-  //definisanje buttona koji vodi na prethodni mjesec
+
+  // Provjera da li je nas target dugme za prethodni mesec
   const isPrevious = e.target.id === 'previous';
-  //Manipulacija currentMonth putem klika
+
+  //Manipulacija currentMonth putem klika, ukoliko jeste dugme za prethodni mjesec oduzimamo 1 vrijednost sa mjeseca, u suprotnom dodajemo 1
   currentMonth += isPrevious ? -1 : 1;
 
   //Ukoliko je postojeci mjesec izvan ovih vrijednosti, tada kreiramo novi datum
@@ -230,18 +247,20 @@ const handleButtonClick = e => {
     date = new Date();
   }
 
-  //Renderujemo kalenar
+  //Render kalenara
   renderCalendar();
 };
 
-//Funckija za klik na absence field
+//Funckija za manipulaicju klik eventa na dugme Ukloni u pop upo koji prikazuje tekst odsustva
 const handleAbsenceClick = field => {
-  // field.textContent=''
-  // field.classList.add('hidden')
+  // Preuzimanje datuma odsustva iz lokalnog skladišta
   const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
+  // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
   let newKey;
+  //ID izabranog datum polja
   const fieldID = field.parentElement.id;
 
+  //Filterovanje kroz absenceDates, da bismo uklonili izabrano polje odsustva
   const newAbsenceDates = absenceDates.filter(([strDate, strText]) => {
     newKey = strDate.split('-');
 
@@ -253,17 +272,15 @@ const handleAbsenceClick = field => {
   // Parsujemo month, zato sto je u obliku koji pocinje sa 0
   newKey = `${parseInt(newKey[1])}-${newKey[0].replace(/\D/g, '')}`;
 
+  // Čuvanje podataka u lokalnom skladištu
   localStorage.setItem(newKey, JSON.stringify(newAbsenceDates));
 
   renderCalendar();
   modalAbsence.classList.add('hidden');
 };
 
-// Event klik  na parent kontenjer buttona
 buttons.addEventListener('click', handleButtonClick);
 btnOpenModal.addEventListener('click', openModal);
 btnCloseModal.addEventListener('click', closeModal);
-
 modalForm.addEventListener('submit', handleSubmit);
-
 renderCalendar();

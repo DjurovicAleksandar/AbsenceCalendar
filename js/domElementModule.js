@@ -1,4 +1,5 @@
 // Selektovanje elemenata iz DOM-a
+
 //Mjesec i datum u naslovu
 export const titleDate = document.querySelector('.title__date');
 //ul lista za datume

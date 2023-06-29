@@ -1,4 +1,5 @@
 import * as elementsDOM from './domElementModule.js';
+import * as helperFunctions from './helperFunctions.js';
 
 const months = [
   'JAN',
@@ -46,9 +47,6 @@ export const closeModal = function () {
   elementsDOM.modal.classList.add('hidden');
 };
 
-// Funkcija za izračunavanje dana, tj fix da sedmica pocinje ponedeljkom, a ne nedeljom
-export const calcDay = day => (day === 0 ? (day = 6) : (day -= 1));
-
 //funckija za prikaz datuma u kalnderu
 export const renderDates = () => {
   //Pvi dan u sedmici
@@ -63,8 +61,8 @@ export const renderDates = () => {
     dateMarkup = ``;
 
   // Prebacivanje nedelje (0) na poslednji dan (6)
-  lastDateDay = calcDay(lastDateDay);
-  firstDateDay = calcDay(firstDateDay);
+  lastDateDay = helperFunctions.calcDay(lastDateDay);
+  firstDateDay = helperFunctions.calcDay(firstDateDay);
 
   // Generisanje datuma iz prethodnog mjeseca
   for (let i = firstDateDay; i > 0; i--) {
@@ -85,12 +83,16 @@ export const renderDates = () => {
 
   //Generisanje datuma iz trenutnog mjeseca
   for (let i = 1; i <= lastMonthDate; i++) {
+    //Odredjivanje trenutnog dayuma
     const currentDate = new Date();
+
+    //Provjera da li je danasnji datum zbog active clase
     const isCurrentDate =
       currentDate.getDate() === i &&
       currentMonth === currentDate.getMonth() &&
       currentYear === currentDate.getFullYear();
 
+    //Kreiranje IDa za Date Field element.
     const liID = `num${currentYear}-${currentMonth
       .toString()
       .padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
@@ -105,6 +107,8 @@ export const renderDates = () => {
     liElement.appendChild(workAbsenceEl);
 
     liElement.id = liID;
+
+    //Ukoliko je isCurrentDate - tj danasnji datum, to datum polje dobija active clasu
     liElement.className = `date__field ${isCurrentDate ? 'active' : ''}`;
     workAbsenceEl.className = 'date__field-leave hidden';
 
@@ -135,7 +139,7 @@ export const renderDates = () => {
 export const renderCalendar = () => {
   key = `${currentMonth}-${currentYear}`;
   // Preuzimanje datuma odsustva iz lokalnog skladišta
-  const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
+  const absenceDates = helperFunctions.getStorage(key);
   elementsDOM.dateList.innerHTML = renderDates();
 
   // Iteracija kroz datume odsustva i prikaz na kalendaru
@@ -166,6 +170,17 @@ export const renderCalendar = () => {
   elementsDOM.titleDate.textContent = `${months[currentMonth]} ${currentYear}`;
 };
 
+//Funkcija za manipulaicju godinom na osnovu mjeseca
+const checkMonthAndUpdateYear = () => {
+  if (currentMonth < 0 || currentMonth > 11) {
+    date = new Date(currentYear, currentMonth);
+    currentMonth = date.getMonth();
+    currentYear = date.getFullYear();
+  } else {
+    date = new Date();
+  }
+};
+
 // Funkcija za manipulaciju formom
 export const handleSubmit = e => {
   e.preventDefault();
@@ -177,7 +192,7 @@ export const handleSubmit = e => {
     .join('-');
 
   // Preuzimanje datuma odsustva iz lokalnog skladišta
-  const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
+  const absenceDates = helperFunctions.getStorage(key);
 
   // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
   let newKey = formattedDate.split('-');
@@ -190,7 +205,8 @@ export const handleSubmit = e => {
   workAbsenceEl.textContent = elementsDOM.inputType.value;
 
   // Čuvanje podataka u lokalnom skladištu
-  localStorage.setItem(newKey, JSON.stringify(absenceDates));
+
+  helperFunctions.setStorage(newKey, absenceDates);
 
   renderCalendar();
   closeModal();
@@ -208,13 +224,7 @@ export const handleButtonClick = e => {
   currentMonth += isPrevious ? -1 : 1;
 
   //Ukoliko je postojeci mjesec izvan ovih vrijednosti, tada kreiramo novi datum
-  if (currentMonth < 0 || currentMonth > 11) {
-    date = new Date(currentYear, currentMonth);
-    currentMonth = date.getMonth();
-    currentYear = date.getFullYear();
-  } else {
-    date = new Date();
-  }
+  checkMonthAndUpdateYear();
 
   //Render kalenara
   renderCalendar();
@@ -223,7 +233,7 @@ export const handleButtonClick = e => {
 //Funckija za manipulaicju klik eventa na dugme Ukloni u pop upo koji prikazuje tekst odsustva
 export const handleAbsenceClick = field => {
   // Preuzimanje datuma odsustva iz lokalnog skladišta
-  const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
+  const absenceDates = helperFunctions.getStorage(key);
   // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
   let newKey;
   //ID izabranog datum polja
@@ -242,7 +252,7 @@ export const handleAbsenceClick = field => {
   newKey = `${parseInt(newKey[1])}-${newKey[0].replace(/\D/g, '')}`;
 
   // Čuvanje podataka u lokalnom skladištu
-  localStorage.setItem(newKey, JSON.stringify(newAbsenceDates));
+  helperFunctions.setStorage(newKey, newAbsenceDates);
 
   renderCalendar();
   elementsDOM.modalAbsence.classList.add('hidden');

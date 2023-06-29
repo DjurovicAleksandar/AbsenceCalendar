@@ -1,6 +1,7 @@
 'use strict';
 
 import * as elementsDOM from './js/domElementModule.js';
+
 import * as functions from './js/functions.js';
 
 elementsDOM.buttons.addEventListener('click', functions.handleButtonClick);

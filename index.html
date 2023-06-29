@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <script defer src="script.js"></script>
+    <script type="module" src="script.js"></script>
     <title>Kalendar | Project</title>
   </head>
   <body>
@@ -38,12 +38,12 @@
         <form id="modal__form">
           <div>
             <label for="date">Datum:</label>
-            <input id="date" type="date" />
+            <input id="date" type="date" required />
           </div>
 
           <div>
             <label for="type">Vrsta odsustva:</label>
-            <input id="type" type="text" />
+            <input id="type" type="text" required />
           </div>
 
           <input class="btn" type="submit" value="Sačuvaj" />

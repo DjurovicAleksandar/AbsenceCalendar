@@ -37,15 +37,20 @@ body {
   min-height: 100vh;
   background-color: var(--bg-color);
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   position: relative;
 }
 
 /* PopUp */
-.modal__container {
+.modal__container,
+.modal__container2 {
   width: 100%;
   height: 100%;
 
-  position: absolute;
+  position: fixed;
   inset: 0;
 
   background-color: rgba(250, 300, 420, 0.1);
@@ -56,7 +61,8 @@ body {
   justify-content: center;
 }
 
-.modal {
+.modal,
+#modal__absence-field {
   width: 20rem;
   height: 25rem;
   padding: 10px;
@@ -70,7 +76,18 @@ body {
   position: relative;
 }
 
-.btn__close {
+#modal__absence-field {
+  width: 10rem;
+  height: 15rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.btn__close,
+.btn__close2 {
   position: absolute;
   top: 0;
   right: 0;
@@ -107,10 +124,16 @@ form input {
   border-radius: var(--border-radius);
 }
 
+.modal__absence-text {
+  color: var(--bg-color);
+
+  font-weight: 600;
+  padding: 4px;
+  margin-bottom: 1rem;
+}
 /* Kotenjer za kalendar i info bar */
 .container {
   width: 90%;
-  margin: 0 auto;
   padding: 10px;
 
   background-color: var(--calendar-bg-color);
@@ -160,12 +183,17 @@ form input {
   top: 50%;
   left: 0;
   background-color: var(--button-color);
-  color: var(--text-color);
+  padding-left: 2px;
+
+  overflow: hidden;
 
   width: 95%;
   height: 1.2rem;
   box-shadow: var(--box-shadow);
   cursor: pointer;
+
+  color: var(--text-color);
+  font-weight: 300;
 }
 
 .weekDays {
@@ -232,4 +260,26 @@ form input {
 
 .hidden {
   display: none;
+}
+
+/* Media queries */
+
+@media (max-width: 600px) {
+  .weekDays li {
+    font-size: 8px;
+  }
+
+  .buttons :first-child {
+    margin-bottom: 10px;
+  }
+
+  #previous__btn,
+  #next__btn,
+  #absence__btn {
+    font-size: 10px;
+    margin: 0 auto;
+  }
+  #absence__btn {
+    margin-right: 10px;
+  }
 }

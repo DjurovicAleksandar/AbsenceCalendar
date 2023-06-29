@@ -11,7 +11,11 @@ const buttons = document.querySelector('.buttons');
 const btnOpenModal = document.querySelector('.btn__open');
 const btnCloseModal = document.querySelector('.btn__close');
 
+const btnDeleteAbsenceModal = document.querySelector('.modal__absence-delete');
+
 const modal = document.querySelector('.modal__container');
+const modalAbsence = document.querySelector('.modal__container2');
+const modalAbsenceText = document.querySelector('.modal__absence-text');
 
 const modalForm = document.getElementById('modal__form');
 const inputDate = document.getElementById('date');
@@ -109,9 +113,9 @@ const renderDates = () => {
       currentMonth === currentDate.getMonth() &&
       currentYear === currentDate.getFullYear();
 
-    const liID = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${i
+    const liID = `num${currentYear}-${currentMonth
       .toString()
-      .padStart(2, '0')}`;
+      .padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
 
     const liContent = i.toString().padStart(2, '0');
 
@@ -158,11 +162,21 @@ const renderCalendar = () => {
   dateList.innerHTML = renderDates();
 
   //loop preko local storagea
-  absenceDates.forEach(strDate => {
-    document
+  absenceDates.forEach(([strDate, strText]) => {
+    const field = document
       .getElementById(`${strDate}`)
-      ?.querySelector('.date__field-leave')
-      .classList.remove('hidden');
+      ?.querySelector('.date__field-leave');
+
+    field.classList.remove('hidden');
+    field.textContent = strText;
+    field.addEventListener('click', e => {
+      modalAbsence.classList.remove('hidden');
+      modalAbsenceText.textContent = strText;
+
+      btnDeleteAbsenceModal.addEventListener('click', () => {
+        handleAbsenceClick(field);
+      });
+    });
   });
 
   titleDate.textContent = `${months[currentMonth]} ${currentYear}`;
@@ -181,17 +195,15 @@ const handleSubmit = e => {
   //itemi iz local Storage-a
   const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
 
-  //Kreiranja novo kljuc, da bude matching sa izabranim mjesecom
+  //Kreiranja novog kljuc, da bude matching sa izabranim mjesecom
   let newKey = formattedDate.split('-');
 
   //Parsujemo month, zato sto je u obliku koji pocinje sa 0
   newKey = `${parseInt(newKey[1])}-${newKey[0]}`;
 
   //Pushamo date u array
-  absenceDates.push(formattedDate);
+  absenceDates.push([`num${formattedDate}`, inputType.value]);
   workAbsenceEl.textContent = inputType.value;
-  console.log(workAbsenceEl.parentElement);
-  console.log(workAbsenceEl.closest(`#${formattedDate}`));
 
   //Snimanje u local storage
   localStorage.setItem(newKey, JSON.stringify(absenceDates));
@@ -220,6 +232,31 @@ const handleButtonClick = e => {
 
   //Renderujemo kalenar
   renderCalendar();
+};
+
+//Funckija za klik na absence field
+const handleAbsenceClick = field => {
+  // field.textContent=''
+  // field.classList.add('hidden')
+  const absenceDates = JSON.parse(localStorage.getItem(`${key}`)) || [];
+  let newKey;
+  const fieldID = field.parentElement.id;
+
+  const newAbsenceDates = absenceDates.filter(([strDate, strText]) => {
+    newKey = strDate.split('-');
+
+    if (strText === field.textContent && strDate === fieldID) return false;
+
+    return true;
+  });
+
+  // Parsujemo month, zato sto je u obliku koji pocinje sa 0
+  newKey = `${parseInt(newKey[1])}-${newKey[0].replace(/\D/g, '')}`;
+
+  localStorage.setItem(newKey, JSON.stringify(newAbsenceDates));
+
+  renderCalendar();
+  modalAbsence.classList.add('hidden');
 };
 
 // Event klik  na parent kontenjer buttona

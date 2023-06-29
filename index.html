@@ -11,21 +11,21 @@
     <div class="container">
       <div class="infoBar">
         <h2 class="title__date">Jun 2023</h2>
-        <button class="btn btn__open">Odsustvo</button>
+        <button id="absence__btn" class="btn btn__open">Odsustvo</button>
         <div class="buttons">
-          <button id="previous" class="btn">Previos</button>
-          <button id="next" class="btn">Next</button>
+          <button id="previous__btn" class="btn"><</button>
+          <button id="next__btn" class="btn">></button>
         </div>
       </div>
       <div class="calendar">
         <ul class="calendar__list weekDays">
-          <li>Ponedeljak</li>
-          <li>Utorak</li>
-          <li>Srijeda</li>
-          <li>Četvrtak</li>
-          <li>Petak</li>
-          <li>Subota</li>
-          <li>Nedelja</li>
+          <li>PON</li>
+          <li>UTO</li>
+          <li>SRE</li>
+          <li>ČET</li>
+          <li>PET</li>
+          <li>SUB</li>
+          <li>NED</li>
         </ul>
         <ul class="calendar__list dates"></ul>
       </div>
@@ -48,6 +48,13 @@
 
           <input class="btn" type="submit" value="Sačuvaj" />
         </form>
+      </div>
+    </div>
+    <div class="modal__container2 hidden">
+      <div id="modal__absence-field">
+        <p class="modal__absence-text"></p>
+        <button class="btn__close2">X</button>
+        <button class="btn modal__absence-delete">Ukloni</button>
       </div>
     </div>
   </body>

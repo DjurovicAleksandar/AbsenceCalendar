@@ -15,18 +15,18 @@ const months = [
   'NOV',
   'DEC',
 ];
-// Kreiranje trenutno datuma, trenutne godine i trenutnog meseca
+
 let date = new Date(),
   currentYear = date.getFullYear(),
   currentMonth = date.getMonth(),
-  //deklaracija key varijable koju koristimo za save elemenata u local storage
+  // holds current month and year, as string for for local storage key.
   key,
-  //workAbsenceEl - u toku kodu kreiramo element na ovu varijablu, koji koristimo za element odsustva na datum polju
+  //absence element displayed on the calendar
   workAbsenceEl;
 
-// Funkcija za otvaranje popup prozora
-export const openModal = function (e) {
-  //Dinamicki odredjujemo datum, da prilikom otvaranja modala prikaze mjesec i godinu na kome smo
+export const openModal = function () {
+  /*date value used for inputDate value,
+   which vary of the month displayed*/
   const formattedDate = `${currentYear}-${(currentMonth + 1)
     .toString()
     .padStart(2, '0')}-${
@@ -37,41 +37,36 @@ export const openModal = function (e) {
   }`;
 
   elementsDOM.inputDate.value = formattedDate;
-
-  //Uklanjanje klase hidden sa modala
   elementsDOM.modal.classList.remove('hidden');
 };
 
-// Funkcija za zatvaranje popup prozora
 export const closeModal = function () {
   elementsDOM.modal.classList.add('hidden');
 };
 
-//funckija za prikaz datuma u kalnderu
+/*
+function generates calendar markup, including previous,
+ current, and next month's dates.
+*/
 export const renderDates = () => {
-  //Pvi dan u sedmici
-  let firstDateDay = new Date(currentYear, currentMonth, 1).getDay(),
-    //Poslednji datum u mjesecu
-    lastMonthDate = new Date(currentYear, currentMonth + 1, 0).getDate(),
-    //Poslednji dan u mjesecu
-    lastDateDay = new Date(currentYear, currentMonth, lastMonthDate).getDay(),
-    //Poslednji datum u prethodnom mjesecu
-    previousMonthLastDate = new Date(currentYear, currentMonth, 0).getDate(),
-    // Promenljiva za smeštanje HTML markup-a
+  let monthStartingDay = new Date(currentYear, currentMonth, 1).getDay(),
+    monthLastDate = new Date(currentYear, currentMonth + 1, 0).getDate(),
+    nextMonthDays = new Date(currentYear, currentMonth, monthLastDate).getDay(),
+    previousMonthDates = new Date(currentYear, currentMonth, 0).getDate(),
     dateMarkup = ``;
 
-  // Prebacivanje nedelje (0) na poslednji dan (6)
-  lastDateDay = helperFunctions.calcDay(lastDateDay);
-  firstDateDay = helperFunctions.calcDay(firstDateDay);
+  // Transferring the sunday (0) to the last day (6)
+  nextMonthDays = helperFunctions.calcDay(nextMonthDays);
+  monthStartingDay = helperFunctions.calcDay(monthStartingDay);
 
-  // Generisanje datuma iz prethodnog mjeseca
-  for (let i = firstDateDay; i > 0; i--) {
+  // Generating dates from the previous month
+  for (let i = monthStartingDay; i > 0; i--) {
     const liID = `${currentYear}-${(currentMonth - 1)
       .toString()
-      .padStart(2, '0')}-${(previousMonthLastDate - i + 1)
+      .padStart(2, '0')}-${(previousMonthDates - i + 1)
       .toString()
       .padStart(2, '0')}`;
-    const liContent = previousMonthLastDate - i + 1;
+    const liContent = previousMonthDates - i + 1;
 
     const liElement = document.createElement('li');
     liElement.id = liID;
@@ -81,18 +76,17 @@ export const renderDates = () => {
     dateMarkup += liElement.outerHTML;
   }
 
-  //Generisanje datuma iz trenutnog mjeseca
-  for (let i = 1; i <= lastMonthDate; i++) {
-    //Odredjivanje trenutnog dayuma
+  // Generating dates from the current month
+  for (let i = 1; i <= monthLastDate; i++) {
     const currentDate = new Date();
 
-    //Provjera da li je danasnji datum zbog active clase
+    // Checking if it's today's date for applying the "active" class
     const isCurrentDate =
       currentDate.getDate() === i &&
       currentMonth === currentDate.getMonth() &&
       currentYear === currentDate.getFullYear();
 
-    //Kreiranje IDa za Date Field element.
+    // Creating an ID for the <li>date<li>
     const liID = `num${currentYear}-${currentMonth
       .toString()
       .padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
@@ -108,23 +102,25 @@ export const renderDates = () => {
 
     liElement.id = liID;
 
-    //Ukoliko je isCurrentDate - tj danasnji datum, to datum polje dobija active clasu
     liElement.className = `date__field ${isCurrentDate ? 'active' : ''}`;
     workAbsenceEl.className = 'date__field-leave hidden';
 
     dateElement.textContent = liContent;
-
     dateMarkup += liElement.outerHTML;
   }
 
-  //Generisanje datuma za sljedeći mjesec
-  for (let i = lastDateDay; i < 6; i++) {
+  // Generating dates for the next month
+  for (let i = nextMonthDays; i < 6; i++) {
     const liID = `${currentYear}-${(currentMonth + 1)
       .toString()
-      .padStart(2, '0')}-${(i - lastDateDay + 1).toString().padStart(2, '0')}`;
-    const liContent = (i - lastDateDay + 1).toString().padStart(2, '0');
+      .padStart(2, '0')}-${(i - nextMonthDays + 1)
+      .toString()
+      .padStart(2, '0')}`;
+
+    const liContent = (i - nextMonthDays + 1).toString().padStart(2, '0');
 
     const liElement = document.createElement('li');
+
     liElement.id = liID;
     liElement.className = 'date__field inactive';
     liElement.textContent = liContent;
@@ -135,42 +131,42 @@ export const renderDates = () => {
   return dateMarkup;
 };
 
-//Funkcija za prikaz kalendara
+/*
+This function renders the calendar, retrieves absence dates from storage, 
+updates the date list, displays absences on the calendar, 
+and handles click events for absence fields
+*/
+
 export const renderCalendar = () => {
   key = `${currentMonth}-${currentYear}`;
-  // Preuzimanje datuma odsustva iz lokalnog skladišta
+
   const absenceDates = helperFunctions.getStorage(key);
   elementsDOM.dateList.innerHTML = renderDates();
 
-  // Iteracija kroz datume odsustva i prikaz na kalendaru
   absenceDates.forEach(([strDate, strText]) => {
-    //Na osnovu strDate-a iz lokalnog skladista, selekcujemo element
     const field = document
       .getElementById(`${strDate}`)
       ?.querySelector('.date__field-leave');
 
-    //Uklanjamo hidden klasu sa polja datuma da bi ga prikazali na kalendaru
     field?.classList.remove('hidden');
-    //Text contet prilogodjavamo text unjetom u modal pop up windowu
     field.textContent = strText;
 
-    //Klikom na polje odsustva u polju datuma otvara pop up, koji prikazuje kompletan tekst tog odsustva
+    //Click event for a popup
     field.addEventListener('click', e => {
       elementsDOM.modalAbsence.classList.remove('hidden');
       elementsDOM.modalAbsenceText.textContent = strText;
 
-      //u pop up se nalazi button Ukloni, klikom na njega uklanjamo odustvo iz kalendara
+      //delete a abbsence from the calendar
       elementsDOM.btnDeleteAbsenceModal.addEventListener('click', () => {
         handleAbsenceClick(field);
       });
     });
   });
 
-  //Dinamički prikaz mjeseca i datuma u naslovu na osnovu trenutne godine i mjeseca
   elementsDOM.titleDate.textContent = `${months[currentMonth]} ${currentYear}`;
 };
 
-//Funkcija za manipulaicju godinom na osnovu mjeseca
+// Function for manipulating the year based on the month
 const checkMonthAndUpdateYear = () => {
   if (currentMonth < 0 || currentMonth > 11) {
     date = new Date(currentYear, currentMonth);
@@ -181,30 +177,29 @@ const checkMonthAndUpdateYear = () => {
   }
 };
 
-// Funkcija za manipulaciju formom
+//Furom submit function
+/*This function, formats input date, adds absence to storage,
+ and updates the calendar.
+*/
 export const handleSubmit = e => {
   e.preventDefault();
 
-  //Formatiramo vrijednost iz inputa da bismo dobili onu koja je podudarna sa stringom datuma
+  // Formatting the value from the input to match the date string
   const formattedDate = elementsDOM.inputDate.value
     .split('-')
     .map((d, i) => (i === 1 ? (d - 1).toString().padStart(2, 0) : d))
     .join('-');
 
-  // Preuzimanje datuma odsustva iz lokalnog skladišta
   const absenceDates = helperFunctions.getStorage(key);
 
-  // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
+  // Creating a new key that will match the selected month
   let newKey = formattedDate.split('-');
 
-  // Parsiranje mjeseca jer je u obliku koji počinje sa 0
+  // Parsing the month because it is in a format that starts with 0
   newKey = `${parseInt(newKey[1])}-${newKey[0]}`;
 
-  // Dodavanje datuma u niz
   absenceDates.push([`num${formattedDate}`, elementsDOM.inputType.value]);
   workAbsenceEl.textContent = elementsDOM.inputType.value;
-
-  // Čuvanje podataka u lokalnom skladištu
 
   helperFunctions.setStorage(newKey, absenceDates);
 
@@ -212,34 +207,25 @@ export const handleSubmit = e => {
   closeModal();
 };
 
-//Funkcija manipulisanja klik eventima - buttoni next i previous
+// handling click events - next and previous buttons ( months, years )
 export const handleButtonClick = e => {
-  //Guardin claw - zaustavljamo obradu klik eventom na djelovima parent kotenjera koji nije dugme
   if (e.target.className !== 'btn') return;
 
-  // Provjera da li je nas target dugme za prethodni mesec
   const isPrevious = e.target.id === 'previous__btn';
 
-  //Manipulacija currentMonth putem klika, ukoliko jeste dugme za prethodni mjesec oduzimamo 1 vrijednost sa mjeseca, u suprotnom dodajemo 1
   currentMonth += isPrevious ? -1 : 1;
 
-  //Ukoliko je postojeci mjesec izvan ovih vrijednosti, tada kreiramo novi datum
   checkMonthAndUpdateYear();
-
-  //Render kalenara
   renderCalendar();
 };
 
-//Funckija za manipulaicju klik eventa na dugme Ukloni u pop upo koji prikazuje tekst odsustva
 export const handleAbsenceClick = field => {
-  // Preuzimanje datuma odsustva iz lokalnog skladišta
   const absenceDates = helperFunctions.getStorage(key);
-  // Kreiranje novog ključa koji će se podudarati sa izabranim mjesecom
-  let newKey;
-  //ID izabranog datum polja
   const fieldID = field.parentElement.id;
+  // Creating a new key that will match the selected month
+  let newKey;
 
-  //Filterovanje kroz absenceDates, da bismo uklonili izabrano polje odsustva
+  //Filtering through absenceDates to remove the selected absence field
   const newAbsenceDates = absenceDates.filter(([strDate, strText]) => {
     newKey = strDate.split('-');
 
@@ -248,10 +234,9 @@ export const handleAbsenceClick = field => {
     return true;
   });
 
-  // Parsujemo month, zato sto je u obliku koji pocinje sa 0
+  // Parsing the month because it is in a format that starts with 0
   newKey = `${parseInt(newKey[1])}-${newKey[0].replace(/\D/g, '')}`;
 
-  // Čuvanje podataka u lokalnom skladištu
   helperFunctions.setStorage(newKey, newAbsenceDates);
 
   renderCalendar();

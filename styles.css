@@ -63,14 +63,14 @@ body {
 
 .modal,
 #modal__absence-field {
-  width: 20rem;
+  width: 18rem;
   height: 25rem;
   padding: 10px;
 
   border-radius: var(--border-radius);
 
   border: 1px solid var(--button-color);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(30px);
 
   color: var(--text-color);
   position: relative;
@@ -135,7 +135,7 @@ form input {
 .container {
   position: relative;
   width: 90%;
-  height: 75vh;
+  height: 85vh;
   padding: 10px;
 
   background-color: var(--calendar-bg-color);
@@ -143,12 +143,9 @@ form input {
 
   border-radius: var(--border-radius);
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-
   box-shadow: var(--box-shadow);
+
+  position: relative;
 }
 
 .container .infoBar {
@@ -157,10 +154,11 @@ form input {
   justify-content: space-between;
   width: 100%;
   padding: 0px 30px;
+}
 
-  position: absolute;
-  top: 10px;
-  right: 1px;
+.buttons {
+  display: flex;
+  gap: 2px;
 }
 
 /* infoBar  */
@@ -170,8 +168,26 @@ form input {
   margin-right: 5px;
   letter-spacing: 4px;
 }
+.infoBar__btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
 
 /* Kalendar */
+
+.calendar {
+  width: 95%;
+
+  position: absolute;
+  top: 55%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+}
+
 .calendar .calendar__list {
   display: flex;
   flex-wrap: wrap;

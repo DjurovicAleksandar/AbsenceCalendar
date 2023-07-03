@@ -71,15 +71,15 @@ body {
 
   border: 1px solid var(--button-color);
   backdrop-filter: blur(30px);
+  background-color: #abaa7c6d;
 
   color: var(--text-color);
   position: relative;
+
+  z-index: 2000;
 }
 
 #modal__absence-field {
-  width: 10rem;
-  height: 15rem;
-
   display: flex;
   flex-direction: column;
   align-items: center;

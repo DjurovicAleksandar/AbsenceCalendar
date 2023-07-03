@@ -19,12 +19,14 @@ const months = [
 let date = new Date(),
   currentYear = date.getFullYear(),
   currentMonth = date.getMonth(),
+  isModalOpen = false,
   // holds current month and year, as string for for local storage key.
   key,
   //absence element displayed on the calendar
   workAbsenceEl;
 
 export const openModal = function () {
+  isModalOpen = true;
   /*date value used for inputDate value,
    which vary of the month displayed*/
   const formattedDate = `${currentYear}-${(currentMonth + 1)
@@ -38,10 +40,18 @@ export const openModal = function () {
 
   elementsDOM.inputDate.value = formattedDate;
   elementsDOM.modal.classList.remove('hidden');
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && isModalOpen) {
+      isModalOpen = false;
+      closeModal();
+    }
+  });
 };
 
 export const closeModal = function () {
   elementsDOM.modal.classList.add('hidden');
+  elementsDOM.modalAbsence.classList.add('hidden');
 };
 
 /*
@@ -149,18 +159,26 @@ export const renderCalendar = () => {
       ?.querySelector('.date__field-leave');
 
     field?.classList.remove('hidden');
-    field.textContent = strText;
+    field && (field.textContent = strText);
 
     //Click event for a popup
-    field.addEventListener('click', e => {
-      elementsDOM.modalAbsence.classList.remove('hidden');
-      elementsDOM.modalAbsenceText.textContent = strText;
+    field &&
+      field.addEventListener('click', e => {
+        isModalOpen = true;
+        elementsDOM.modalAbsence.classList.remove('hidden');
+        elementsDOM.modalAbsenceText.textContent = strText;
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && isModalOpen) {
+            isModalOpen = false;
+            closeModal();
+          }
+        });
 
-      //delete a abbsence from the calendar
-      elementsDOM.btnDeleteAbsenceModal.addEventListener('click', () => {
-        handleAbsenceClick(field);
+        //delete a abbsence from the calendar
+        elementsDOM.btnDeleteAbsenceModal.addEventListener('click', () => {
+          handleAbsenceClick(field);
+        });
       });
-    });
   });
 
   elementsDOM.titleDate.textContent = `${months[currentMonth]} ${currentYear}`;
@@ -241,4 +259,12 @@ export const handleAbsenceClick = field => {
 
   renderCalendar();
   elementsDOM.modalAbsence.classList.add('hidden');
+};
+
+//close modal
+export const handleModalOutsideClick = e => {
+  const con = e.target.closest('.modal__con');
+
+  if (con) return;
+  else closeModal();
 };

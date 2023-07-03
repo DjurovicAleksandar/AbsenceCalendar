@@ -6,6 +6,7 @@ export const buttons = document.querySelector('.buttons');
 export const modal = document.querySelector('.modal__container');
 export const btnOpenModal = document.querySelector('.btn__open');
 export const btnCloseModal = document.querySelector('.btn__close');
+export const btnCloseAbsenceModal = document.querySelector('.btn__close2');
 export const modalForm = document.getElementById('modal__form');
 
 export const inputDate = document.getElementById('date');

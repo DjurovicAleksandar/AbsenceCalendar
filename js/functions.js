@@ -159,24 +159,12 @@ export const renderCalendar = () => {
 
   //adding click event to date fields
   dataField.forEach(dateF => {
-    dateF.addEventListener('click', e => {
-      const isHidden = dateF
-        .querySelector('.date__field-leave')
-        .classList.contains('hidden');
-
-      const modalStr = dateF.id
-        .replace('num', '')
-        .split('-')
-        .map((e, i) => {
-          if (i === 1) return (+e + 1).toString().padStart(2, '0');
-          else return e;
-        })
-        .join('-');
-
-      if (isHidden) {
-        openModal();
-        elementsDOM.inputDate.value = modalStr;
-      }
+    dateF.addEventListener('click', () => {
+      helperFunctions.handleDateFieldClick(
+        dateF,
+        openModal,
+        elementsDOM.inputDate
+      );
     });
   });
 

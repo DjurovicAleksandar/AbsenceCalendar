@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-color: #d4a299;
+  --bg-color: #917069;
   --calendar-bg-color: #e4e2e1;
 
   --text-color: #ab837c;
@@ -200,6 +200,7 @@ form input {
 
   padding: 4px;
   position: relative;
+  cursor: pointer;
 }
 
 .date__field-leave {

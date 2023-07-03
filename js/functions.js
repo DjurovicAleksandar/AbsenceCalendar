@@ -107,6 +107,8 @@ export const renderDates = () => {
     const dateElement = document.createElement('div');
     workAbsenceEl = document.createElement('div');
 
+    liElement.addEventListener('click', () => {});
+
     liElement.appendChild(dateElement);
     liElement.appendChild(workAbsenceEl);
 
@@ -153,6 +155,31 @@ export const renderCalendar = () => {
   const absenceDates = helperFunctions.getStorage(key);
   elementsDOM.dateList.innerHTML = renderDates();
 
+  const dataField = document.querySelectorAll('.date__field');
+
+  //adding click event to date fields
+  dataField.forEach(dateF => {
+    dateF.addEventListener('click', e => {
+      const isHidden = dateF
+        .querySelector('.date__field-leave')
+        .classList.contains('hidden');
+
+      const modalStr = dateF.id
+        .replace('num', '')
+        .split('-')
+        .map((e, i) => {
+          if (i === 1) return (+e + 1).toString().padStart(2, '0');
+          else return e;
+        })
+        .join('-');
+
+      if (isHidden) {
+        openModal();
+        elementsDOM.inputDate.value = modalStr;
+      }
+    });
+  });
+
   absenceDates.forEach(([strDate, strText]) => {
     const field = document
       .getElementById(`${strDate}`)
@@ -174,7 +201,7 @@ export const renderCalendar = () => {
           }
         });
 
-        //delete a abbsence from the calendar
+        //delete an abbsence from the calendar
         elementsDOM.btnDeleteAbsenceModal.addEventListener('click', () => {
           handleAbsenceClick(field);
         });
@@ -203,10 +230,7 @@ export const handleSubmit = e => {
   e.preventDefault();
 
   // Formatting the value from the input to match the date string
-  const formattedDate = elementsDOM.inputDate.value
-    .split('-')
-    .map((d, i) => (i === 1 ? (d - 1).toString().padStart(2, 0) : d))
-    .join('-');
+  const formattedDate = helperFunctions.formatDate(elementsDOM.inputDate.value);
 
   const absenceDates = helperFunctions.getStorage(key);
 

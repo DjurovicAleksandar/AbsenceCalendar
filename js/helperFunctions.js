@@ -6,3 +6,10 @@ export const setStorage = (keyName, valueName) =>
 
 export const getStorage = keyName =>
   JSON.parse(localStorage.getItem(`${keyName}`)) || [];
+
+export const formatDate = input => {
+  return input
+    .split('-')
+    .map((d, i) => (i === 1 ? (d - 1).toString().padStart(2, 0) : d))
+    .join('-');
+};

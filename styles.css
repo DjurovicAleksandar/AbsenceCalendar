@@ -64,7 +64,7 @@ body {
 .modal,
 #modal__absence-field {
   width: 18rem;
-  height: 25rem;
+  height: 26rem;
   padding: 10px;
 
   border-radius: var(--border-radius);
